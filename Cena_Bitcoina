@@ -1,0 +1,60 @@
+# STÓJ! Pamiętaj o tym by zainstalować bibliotekę pt.: "response". Bez niej program nie będzie działał!
+
+import requests
+
+bitcoin_api_url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'
+
+
+# Pobieranie aktualnego kursu Bitcoina
+
+def get_bitcoin_price():
+    response = requests.get(bitcoin_api_url)
+    if response.status_code == 200:
+        bitcoin_data = response.json()
+        bitcoin_price = bitcoin_data['bitcoin']['usd']
+        return round(bitcoin_price, 2)
+    else:
+        return None
+
+
+# Pobieranie historii kursu Bitcoina z ostatnich n dni
+
+def get_bitcoin_history(days):
+    bitcoin_history_api_url = f'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days={days}'
+    response = requests.get(bitcoin_history_api_url)
+    if response.status_code == 200:
+        bitcoin_history_data = response.json()
+        bitcoin_prices = [round(x[1], 2) for x in bitcoin_history_data['prices']]
+        return bitcoin_prices
+    else:
+        return None
+
+
+# Obliczanie średniej wartości kursów Bitcoina
+
+def bitcoin_prices_avg(prices):
+    avg_price = sum(prices) / len(prices)
+    return round(avg_price, 2)
+
+
+# Analiza Bitcoina
+
+days_input = input('Podaj liczbę dni, dla których chcesz zobaczyć kurs Bitcoina (możesz też wpisać: "wczoraj" lub '
+                   '"dziś"): ')
+if days_input.lower() == 'dziś':
+    days = 0
+
+elif days_input.lower() == 'wczoraj':
+    days = 1
+
+else:
+    days = int(days_input)
+
+bitcoin_prices = get_bitcoin_history(days)
+if bitcoin_prices is not None:
+    print(f'Kurs Bitcoina z ostatnich {days} dni: {bitcoin_prices}')
+    avg_price = bitcoin_prices_avg(bitcoin_prices)
+    print(f'Średni kurs Bitcoina z ostatnich {days} dni: {avg_price}')
+else:
+    print('Niestety, nie udało się pobrać odpowiednich danych.')
+
