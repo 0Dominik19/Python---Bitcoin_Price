@@ -40,6 +40,7 @@ else:
 
 bitcoin_prices = get_bitcoin_history(days)
 if bitcoin_prices is not None:
+    print("")
     print(f'Bitcoin price in USD from the last {days} days: {bitcoin_prices}')
     avg_price = bitcoin_prices_avg(bitcoin_prices)
     print(f'Average Bitcoin price in USD from the last {days} days: {avg_price}')
